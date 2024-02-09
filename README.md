@@ -31,7 +31,7 @@ Bathymetry from International BAthymetric Chart of the Arctic Ocean (IBCAO)
 Version 3.0, Jakobsson et al. (2012).
 [https://doi.org/10.1029/2012GL052219](https://doi.org/10.1029/2012GL052219),
 details in MetadataS1.pdf.
- data/DataS2_forcing_fields_nutrients:
+- data/DataS2_forcing_fields_nutrients:
 Forcing fields of nutrient concentrations between January 1 to May 15 for the
 reference simulation (EXP-0).
 They are also the *in situ* nutrient concentrations at the Qikiqtarjuaq sea
@@ -85,7 +85,7 @@ The exact procedure I used to deploy the code on a supercomputer of the Digital 
 
 ```
 module load git-lfs
-git_lfs clone git@github.com:maximebenoitgagne/gud_groups.git
+git_lfs clone git@github.com:maximebenoitgagne/timing.git
 ```
 
 The procedure to run the model is in the README of the directory gud_1d_35+16.
