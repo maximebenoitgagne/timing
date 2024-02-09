@@ -1,0 +1,5 @@
+data.rbcs.no3.times.0.25
+data.rbcs.no3.times.0.50
+data.rbcs.no3.times.1.00
+data.rbcs.no3.times.2.00
+data.rbcs.no3.times.4.00

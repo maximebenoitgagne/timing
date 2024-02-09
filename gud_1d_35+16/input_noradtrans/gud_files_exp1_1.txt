@@ -1,0 +1,6 @@
+data.gud.grp_Xmin.1E0
+data.gud.grp_Xmin.1Eminus1
+data.gud.grp_Xmin.1Eminus2.reference
+data.gud.grp_Xmin.1Eminus3
+data.gud.grp_Xmin.1Eminus4
+data.gud.grp_Xmin.0
