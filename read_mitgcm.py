@@ -17,477 +17,11 @@
 import numpy as np
 
 import netcdf_tools
-import vstats_pos
+import vstats
 
 ########### constant ###########
 
 molarmassC=12.0107 # g C (mol C)^-1
-
-########### function ###########
-
-"""
-get the sum of vertically integrated biomasses of the tracers
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-    tracers(array-like):
-        Array of 1 dimension.
-        The first dimension is the indices of the tracers in the array.
-        The values are the names of the tracers, e.g. 'TRAC35'.
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_bio(infile,
-                       array1d_iT1y_iT,
-                       array1d_idepth_delR,
-                       depth_end,
-                       tracers):
-    ndays=len(array1d_iT1y_iT)
-    array1d_iT_bio=np.zeros(ndays)
-    for tracer in tracers:
-        array2d_idepth_iT_biotfull\
-        =netcdf_tools.read_netcdf(infile,tracer).squeeze().transpose()
-        array2d_idepth_iT_biotfull[-1,:]=np.nan
-        array2d_idepth_iT_biotfull=array2d_idepth_iT_biotfull*molarmassC
-        array1d_iT_valfull=vstats_pos.vint(
-            array2d_idepth_iT_tracer=array2d_idepth_iT_biotfull,
-            array1d_idepth_delR=array1d_idepth_delR,
-            depth_end=depth_end)
-        array1d_iT_biot=array1d_iT_valfull[array1d_iT1y_iT]
-        array1d_iT_bio=array1d_iT_bio+array1d_iT_biot
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of diatoms
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biodiatoms(infile,
-                       array1d_iT1y_iT,
-                       array1d_idepth_delR,
-                       depth_end):
-    tracers=['TRAC35','TRAC36','TRAC37','TRAC38','TRAC39','TRAC40','TRAC41',
-             'TRAC42','TRAC43']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of dinoflagellates
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biodino(infile,
-                           array1d_iT1y_iT,
-                           array1d_idepth_delR,
-                           depth_end):
-    tracers=['TRAC44','TRAC45','TRAC46','TRAC47','TRAC48','TRAC49','TRAC50',
-             'TRAC51','TRAC52','TRAC53']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of other nanoeukaryotes
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_bioother(infile,
-                            array1d_iT1y_iT,
-                            array1d_idepth_delR,
-                            depth_end):
-    tracers=['TRAC25','TRAC26','TRAC27','TRAC28','TRAC29']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of phytoplankton <= 4.5 um
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biophytolte4_5(infile,
-                                  array1d_iT1y_iT,
-                                  array1d_idepth_delR,
-                                  depth_end):
-    tracers=['TRAC21','TRAC22','TRAC23','TRAC24','TRAC25','TRAC26','TRAC30',
-             'TRAC31']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of phytoplankton = 6.6 um
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biophyto6_6(infile,
-                               array1d_iT1y_iT,
-                               array1d_idepth_delR,
-                               depth_end):
-    tracers=['TRAC27','TRAC32','TRAC35','TRAC44']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of phytoplankton = 10 um
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biophyto10(infile,
-                              array1d_iT1y_iT,
-                              array1d_idepth_delR,
-                              depth_end):
-    tracers=['TRAC28','TRAC33','TRAC36','TRAC45']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of phytoplankton = 15 um
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biophyto15(infile,
-                              array1d_iT1y_iT,
-                              array1d_idepth_delR,
-                              depth_end):
-    tracers=['TRAC29','TRAC34','TRAC37','TRAC46']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of phytoplankton >= 20 um
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biophytoge20(infile,
-                                array1d_iT1y_iT,
-                                array1d_idepth_delR,
-                                depth_end):
-    tracers=['TRAC38','TRAC39','TRAC40','TRAC41','TRAC42','TRAC43','TRAC47',
-    'TRAC48','TRAC49','TRAC50','TRAC51','TRAC52','TRAC53']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
-
-########### function ###########
-
-"""
-get the vertically integrated biomasses of picophytoplankton
-
-Args:
-    infile(str):
-        The netCDF4 file for biomass from a simulation by the biogeochemical 
-        component of MITgcm.
-    array1d_iT1y_iT(array-like):
-        Array of 1 dimension.
-        The first dimension (of length 365) is the indices of the indices of 
-        the days.
-        The values are the indices of the days.
-        For example, if infile contains daily data over 10 years and we want
-        the tenth year, we need to get the values at the indices 3285 to 3649.
-        array1d_iT1y_iT is that 3285 to 3649.
-    array1d_idepth_delR(numpy.array):
-        Array of 1 dimension.
-        The first dimension is the indices of the depths.
-        The values are the the r cell face separations, meaning the thickness 
-        of each depth layer (in m).
-        It corresponds to delR on
-        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
-    depth_end(integer):
-        depth to which calculate the surface mean (depth is positive)
-
-Returns:
-    array1d_iT_bio(array-like):
-        Array of 1 dimension
-        The first dimension is the indices of the time steps.
-        The values are the vertically integrated biomasses (mg C m^-2).
-"""
-def get_array1d_iT_biopico(infile,
-                           array1d_iT1y_iT,
-                           array1d_idepth_delR,
-                           depth_end):
-    tracers=['TRAC21','TRAC22','TRAC23','TRAC24']
-    array1d_iT_bio=get_array1d_iT_bio(infile,
-                                      array1d_iT1y_iT,
-                                      array1d_idepth_delR,
-                                      depth_end,
-                                      tracers)
-    return array1d_iT_bio
 
 ########### function ###########
 
@@ -1082,3 +616,60 @@ def get_array2d_idepth_iT_phytobiofull(infile):
         +array2d_idepth_iT_diatombiofull+array2d_idepth_iT_dinobiofull
 
     return array2d_idepth_iT_phytobiofull
+
+########### function ###########
+
+"""
+read and vertically integrate a tracer
+
+idepths and iTs are sequences of indices not necessarily contiguous.
+
+Args:
+    infile(str):
+        The netCDF4 file for a tracer from a simulation by the
+        biogeochemical component of MITgcm.
+    drF(array-like):
+        The r cell face separations, meaning the thickness of each depth layer
+        (in m).
+        It corresponds to delR on
+        https://mitgcm.readthedocs.io/en/latest/getting_started/getting_started.html#grid
+    itracers(array-like):
+        The index of a tracer if there is only one tracer.
+        The indices of the tracers if there are more than on tracer
+        to sum.
+    idepths(array-like):
+        The indices of the vertical cells of the grid.
+    iTs(array-like):
+        The indices of the time steps.
+
+Returns:
+    array1d_iT_vint(array-like):
+        Array of 1 dimension.
+        The first dimension is the indices of the time steps.
+        The values are the tracers vertically integrated
+        (mmol m^-2).
+"""
+def read_array1d_iT_vint(infile,drF,itracers,idepths,iTs):
+    array2d_idepth_iT_tracer=np.zeros([idepths.size,iTs.size])
+    for itracer in itracers:
+        if itracer==100:
+            itracer='0a'
+        elif itracer==101:
+            itracer='0b'
+        elif itracer==102:
+            itracer='0c'
+        varname='TRAC'+str(itracer).zfill(2)
+        array2d_idepth_iT_tracerfull\
+        =netcdf_tools.read_netcdf(infile,varname).squeeze().transpose()
+        array2d_idepth_iT_tracerfull[-1,:]=np.nan
+        # see
+        # https://numpy.org/doc/stable/user/basics.indexing.html#integer-array-indexing
+        array2d_idepth_iT_tracertempo\
+        =array2d_idepth_iT_tracerfull[np.ix_(idepths,iTs)]
+        array2d_idepth_iT_tracer\
+        =array2d_idepth_iT_tracer+array2d_idepth_iT_tracertempo
+    array1d_iT_vint=vstats.vint(
+        array2d_idepth_iT_tracer=array2d_idepth_iT_tracer,
+        array1d_idepth_delR=drF,
+        depth_end=-100)
+    return array1d_iT_vint
