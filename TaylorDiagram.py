@@ -96,7 +96,7 @@ class TaylorDiagram(object):
         ax.axis["right"].toggle(ticklabels=True)
         ax.axis["right"].major_ticklabels.set_axis_direction(
             "bottom" if extend else "left")
-        ax.axis["right"].label.set_text("Normalized standard deviation")
+        ax.axis["right"].label.set_text("Normalised standard deviation")
         ax.axis["right"].label.set_visible(True)
 
         if self.smin:
