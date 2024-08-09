@@ -29,7 +29,5 @@ authors:
   given-names: "Frederic"
   orcid: "https://orcid.org/0000-0001-7115-2464"
 title: "maximebenoitgagne/timing: Exploring controls on the timing of the phytoplankton bloom in western Baffin Bay, Canadian Arctic"
-version: 0.1.0
-doi: 10.5281/zenodo.10642024
-date-released: 2024-02-09
-url: "https://doi.org/10.5281/zenodo.10642024"
+version: 0.1.4
+date-released: 2024-08-09
